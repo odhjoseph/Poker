@@ -6,8 +6,10 @@ import (
 	"strconv"
 	"time"
 
+	"fyne.io/fyne"
 	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/canvas"
+	//"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -55,7 +57,7 @@ func dealCard(deck Deck) Card {
 	return deck[deckHand-1]
 }
 
-//Implement
+//rewrite in bytes
 func showCard(suit int, cardNumber int) string {
 	var cardFileName string
 
@@ -71,6 +73,7 @@ func showCard(suit int, cardNumber int) string {
 		cardFileName += "K"
 	}
 
+	//Switch 2-10???
 	if cardNumber <= 10 && cardNumber > 1 {
 		cardFileName += strconv.Itoa(cardNumber)
 	}
@@ -86,32 +89,39 @@ func showCard(suit int, cardNumber int) string {
 	case 4:
 		cardFileName += "S"
 	}
+	cardFileName += ".svg"
 
 	return cardFileName
 
 }
 
 func main() {
-	//dec creation
+	//deck creation
 	var deck Deck
+	//var cardImage *canvas.Image
+	cardImage := canvas.NewImageFromFile("faces/" + "space.svg")
+	//cardImage.SetMinSize(fyne.Size())
+
 	deck = generatePlayingDeck(deck)
 	Shuffle(deck)
-	//thisCard := dealCard(deck)
-	fmt.Println(deck)
-	fmt.Println(len(deck))
 
 	myApp := app.New()
-	w := myApp.NewWindow("Box Layout")
-	blankLabel := widget.NewLabel("")
+	w := myApp.NewWindow("Poker")
 
-	w.SetContent(container.NewVBox(
-		blankLabel,
-		widget.NewButton("Deal Card", func() {
-			newCard := dealCard(deck)
-			//image := canvas.NewImageFromFile(faces/
-			blankLabel.SetText(strconv.Itoa(newCard.Suit) + " " + strconv.Itoa(newCard.Number))
-		}),
-	))
+	dealCard := widget.NewButton("Deal Card", func() {
+		newCard := dealCard(deck)
+		cardName := showCard(newCard.Suit, newCard.Number)
+		cardImage = canvas.NewImageFromFile("faces/" + cardName)
+		cardImage.FillMode = canvas.ImageFillOriginal
+	})
+
+	fmt.Println(dealCard)
+
+	w.SetContent(
+		cardImage,
+	)
+
+	w.Resize(200, 300)
 
 	w.ShowAndRun()
 
