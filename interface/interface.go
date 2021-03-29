@@ -121,7 +121,7 @@ func main() {
 		cardImage,
 	)
 
-	w.Resize(200, 300)
+	w.Resize(fyne.NewSize(200, 300))
 
 	w.ShowAndRun()
 
